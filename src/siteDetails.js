@@ -1,5 +1,6 @@
 export const config = {
-  serverUrl: 'http://159.65.156.169:3002/',
-  //   serverUrl: 'http://127.0.0.1:3000/'
-  imageUrl: 'http://159.65.156.169/uploads/'
+  // serverUrl: 'http://159.65.156.169:3002/',
+  serverUrl: 'https://bigberry.tk/',
+  // imageUrl: 'https://bigberry.tk/uploads/',
+  imageUrl: 'http://165.22.212.180/uploads',
 };

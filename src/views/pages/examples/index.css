@@ -1,0 +1,49 @@
+.navBarText {
+  margin-left: 10px !important;
+  font-size: 17px;
+  margin-top: 13px;
+}
+.chat-list {
+  height: 74vh;
+  background-color: white;
+  border-radius: 10px;
+}
+.message-list {
+  height: 68vh;
+  border-left: 15px solid #ffffff;
+  border-right: 15px solid #ffffff;
+  border-top: 15px solid #ffffff;
+  border-bottom: 15px solid #ffffff;
+
+  border-radius: 20px;
+  margin-top: 10px;
+  border-width: 0.5rem;
+  margin-bottom: 10px;
+}
+.user-list {
+  height: 300px;
+  overflow-y: scroll;
+}
+.message {
+  margin-top: 10px;
+}
+.rce-mbox-text {
+  padding: 3px;
+}
+.rce-mbox {
+  background-color: antiquewhite !important;
+}
+.rce-mbox-right-notch {
+  fill: aliceblue !important;
+}
+.rce-mbox-left-notch {
+  fill: antiquewhite !important;
+}
+.rce-mbox-right {
+  background-color: aliceblue !important;
+}
+
+.form-group {
+  border: 2px solid #f4f4f4;
+  border-radius: 10px;
+}

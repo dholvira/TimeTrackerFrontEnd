@@ -96,6 +96,7 @@ import ReactBSAlert from 'react-bootstrap-sweetalert';
 // const { ipcRenderer } = window.require('electron');
 
 class Dashboard extends React.Component {
+  _isMounted = false;
   state = {
     activeNav: 1,
     chartExample1Data: 'data1',
@@ -429,7 +430,7 @@ Note that we must include prefixes for different browsers, as they don't support
               this.setState({ breaksCount: res.data });
               this.setState({ totalSections: Math.ceil(res.data / 50) });
 
-              // console.log('emp data saved in redux');
+              console.log('emp data saved in redux');
             } else {
               this.setState({ breaksCount: 0 });
               this.setState({ totalSections: 0 });
@@ -575,6 +576,7 @@ Note that we must include prefixes for different browsers, as they don't support
     this.toggleModal('logBreakFormModal');
   };
   componentDidMount() {
+    this._isMounted = true;
     this.breaksCount();
     this.fetchBreaks();
     this.checkBreaks();
@@ -594,19 +596,37 @@ Note that we must include prefixes for different browsers, as they don't support
     //   }
     // )
     window.ipcRenderer.on('message', async (event, data) => {
-      try {
-        console.log('Message received', data);
-        if (self.props.location.pathname !== '/admin/dashboard') {
-          self.props.history.push('/admin/dashboard');
+      if (this._isMounted) {
+        try {
+          console.log('Message received', data);
+          // if (self.props.location.pathname !== '/admin/dashboard') {
+          //   self.props.history.push('/admin/dashboard');
+          // }
+          self.warningIdleAlert(data.alert);
+          window.ipcRenderer.sendSync(
+            'logOut',
+            'stop monitoring counter started'
+          );
+          window.ipcRenderer.sendSync('counterStart', 'react start counter');
+        } catch (e) {
+          console.log(e, 'error ipc');
         }
-        self.warningIdleAlert(data.alert);
-        window.ipcRenderer.sendSync(
-          'logOut',
-          'stop monitoring counter started'
-        );
-        window.ipcRenderer.sendSync('counterStart', 'react start counter');
-      } catch (e) {
-        console.log(e, 'error ipc');
+      } else {
+        // window.location.reload();
+        try {
+          console.log('Message received', data);
+          if (self.props.location.pathname !== '/admin/dashboard') {
+            self.props.history.push('/admin');
+          }
+          self.warningIdleAlert(data.alert);
+          window.ipcRenderer.sendSync(
+            'logOut',
+            'stop monitoring counter started'
+          );
+          window.ipcRenderer.sendSync('counterStart', 'react start counter');
+        } catch (e) {
+          console.log(e, 'error ipc');
+        }
       }
       // When the message is received...
       // ... change the state of this React component.
@@ -662,6 +682,10 @@ Note that we must include prefixes for different browsers, as they don't support
 
     //   // self.setState({ alert: data.alert });
     // });
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {

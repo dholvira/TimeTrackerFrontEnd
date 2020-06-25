@@ -14,21 +14,21 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React from 'react';
 // react plugin used to create google maps
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
-  Marker
-} from "react-google-maps";
+  Marker,
+} from 'react-google-maps';
 // reactstrap components
-import { Card, Container, Row } from "reactstrap";
+import { Card, Container, Row } from 'reactstrap';
 // core components
-import SimpleHeader from "components/Headers/SimpleHeader.jsx";
+import SimpleHeader from 'components/Headers/SimpleHeader.jsx';
 
 const MapCustom = withScriptjs(
-  withGoogleMap(props => (
+  withGoogleMap((props) => (
     <GoogleMap
       defaultZoom={12}
       defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
@@ -36,46 +36,46 @@ const MapCustom = withScriptjs(
         scrollwheel: false,
         styles: [
           {
-            featureType: "administrative",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#444444" }]
+            featureType: 'administrative',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#444444' }],
           },
           {
-            featureType: "landscape",
-            elementType: "all",
-            stylers: [{ color: "#f2f2f2" }]
+            featureType: 'landscape',
+            elementType: 'all',
+            stylers: [{ color: '#f2f2f2' }],
           },
           {
-            featureType: "poi",
-            elementType: "all",
-            stylers: [{ visibility: "off" }]
+            featureType: 'poi',
+            elementType: 'all',
+            stylers: [{ visibility: 'off' }],
           },
           {
-            featureType: "road",
-            elementType: "all",
-            stylers: [{ saturation: -100 }, { lightness: 45 }]
+            featureType: 'road',
+            elementType: 'all',
+            stylers: [{ saturation: -100 }, { lightness: 45 }],
           },
           {
-            featureType: "road.highway",
-            elementType: "all",
-            stylers: [{ visibility: "simplified" }]
+            featureType: 'road.highway',
+            elementType: 'all',
+            stylers: [{ visibility: 'simplified' }],
           },
           {
-            featureType: "road.arterial",
-            elementType: "labels.icon",
-            stylers: [{ visibility: "off" }]
+            featureType: 'road.arterial',
+            elementType: 'labels.icon',
+            stylers: [{ visibility: 'off' }],
           },
           {
-            featureType: "transit",
-            elementType: "all",
-            stylers: [{ visibility: "off" }]
+            featureType: 'transit',
+            elementType: 'all',
+            stylers: [{ visibility: 'off' }],
           },
           {
-            featureType: "water",
-            elementType: "all",
-            stylers: [{ color: "#5e72e4" }, { visibility: "on" }]
-          }
-        ]
+            featureType: 'water',
+            elementType: 'all',
+            stylers: [{ color: '#5e72e4' }, { visibility: 'on' }],
+          },
+        ],
       }}
     >
       <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
@@ -84,12 +84,12 @@ const MapCustom = withScriptjs(
 );
 
 const MapDefault = withScriptjs(
-  withGoogleMap(props => (
+  withGoogleMap((props) => (
     <GoogleMap
       defaultZoom={8}
       defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
       defaultOptions={{
-        scrollwheel: false
+        scrollwheel: false,
       }}
     >
       <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
@@ -101,43 +101,43 @@ class Google extends React.Component {
   render() {
     return (
       <>
-        <SimpleHeader name="Google maps" parentName="Maps" />
-        <Container className="mt--6" fluid>
+        <SimpleHeader name='Google maps' parentName='Maps' />
+        <Container className='mt--6' fluid>
           <Row>
-            <div className="col">
-              <Card className="border-0">
+            <div className='col'>
+              <Card className='border-0'>
                 <MapCustom
-                  googleMapURL="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"
+                  googleMapURL='https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE'
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={
                     <div
                       style={{ height: `600px` }}
-                      className="map-canvas"
-                      id="map-custom"
+                      className='map-canvas'
+                      id='map-custom'
                     />
                   }
                   mapElement={
-                    <div style={{ height: `100%`, borderRadius: "inherit" }} />
+                    <div style={{ height: `100%`, borderRadius: 'inherit' }} />
                   }
                 />
               </Card>
             </div>
           </Row>
           <Row>
-            <div className="col">
-              <Card className="border-0">
+            <div className='col'>
+              <Card className='border-0'>
                 <MapDefault
-                  googleMapURL="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"
+                  googleMapURL='https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE'
                   loadingElement={<div style={{ height: `100%` }} />}
                   containerElement={
                     <div
                       style={{ height: `600px` }}
-                      className="map-canvas"
-                      id="map-default"
+                      className='map-canvas'
+                      id='map-default'
                     />
                   }
                   mapElement={
-                    <div style={{ height: `100%`, borderRadius: "inherit" }} />
+                    <div style={{ height: `100%`, borderRadius: 'inherit' }} />
                   }
                 />
               </Card>

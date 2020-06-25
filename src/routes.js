@@ -47,7 +47,9 @@ import LeaveLog from 'views/pages/LeaveLog';
 import TypingGame from 'views/pages/game/Typing/typingGame';
 import Game from 'views/pages/game/TicTacToe/index.js';
 import LeaveLogs from 'views/pages/LeaveLogs';
-// import Chat from 'views/pages/examples/Chat.jsx';
+import Spy from 'views/pages/spy/Spy';
+
+import Chat from 'views/pages/examples/Chat.jsx';
 
 const routes = [
   {
@@ -101,12 +103,13 @@ const routes = [
         component: Login,
         layout: '/auth',
       },
-      // {
-      //   path: '/chat',
-      //   name: 'Chat',
-      //   component: Chat,
-      //   layout: '/admin',
-      // },
+      {
+        invisible: false,
+        path: '/chat',
+        name: 'Chat',
+        component: Chat,
+        layout: '/admin',
+      },
       {
         invisible: true,
 
@@ -139,7 +142,7 @@ const routes = [
   },
   {
     collapse: true,
-    invisible: false,
+    invisible: true,
     name: 'Components',
     icon: 'ni ni-ui-04 text-info',
     state: 'componentsCollapse',
@@ -362,7 +365,7 @@ const routes = [
     invisible: true,
     collapse: true,
     name: 'Maps',
-    icon: 'ni ni-map-big text-primary',
+    icon: 'ni ni-ui-04 text-warning',
     state: 'mapsCollapse',
     views: [
       {
@@ -377,6 +380,21 @@ const routes = [
         path: '/vector',
         name: 'World Map',
         component: Vector,
+        layout: '/admin',
+      },
+    ],
+  },
+  {
+    invisible: false,
+    collapse: true,
+    name: 'Status',
+    icon: 'ni ni-ui-04 text-warning',
+    state: 'mapsCollapse',
+    views: [
+      {
+        path: '/spy',
+        name: 'Monitor',
+        component: Spy,
         layout: '/admin',
       },
     ],

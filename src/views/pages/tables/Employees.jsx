@@ -45,7 +45,7 @@ import {
   InputGroupAddon,
   InputGroupText,
   InputGroup,
-  FormGroup
+  FormGroup,
 } from 'reactstrap';
 import ReactBSAlert from 'react-bootstrap-sweetalert';
 
@@ -54,7 +54,7 @@ import {
   getEmployees,
   addEmployee,
   deleteEmployee,
-  editEmployee
+  editEmployee,
 } from '../../../actions/user_actions';
 // core components
 import Moment from 'react-moment';
@@ -74,16 +74,16 @@ class Employees extends React.Component {
     alert: null,
     notifyAlert: null,
     employees: [],
-    id: ''
+    id: '',
   };
 
-  toggleModal = state => {
+  toggleModal = (state) => {
     this.setState({
-      [state]: !this.state[state]
+      [state]: !this.state[state],
     });
   };
   getEmployeesData = () => {
-    this.props.getEmployees().then(res => {
+    this.props.getEmployees().then((res) => {
       if (res) {
         this.setState({ employees: res.data });
       } else {
@@ -91,7 +91,7 @@ class Employees extends React.Component {
       }
     });
   };
-  onChangeHandler = e => {
+  onChangeHandler = (e) => {
     let name = e.target.name;
     this.setState({ [name]: e.target.value });
   };
@@ -110,11 +110,11 @@ class Employees extends React.Component {
         >
           Success..
         </ReactBSAlert>
-      )
+      ),
     });
   };
 
-  warningAlert = id => {
+  warningAlert = (id) => {
     this.setState({
       notifyAlert: (
         <ReactBSAlert
@@ -132,12 +132,12 @@ class Employees extends React.Component {
         >
           Are you sure you want to delete record..
         </ReactBSAlert>
-      )
+      ),
     });
   };
 
-  deleteEmp = id => {
-    this.props.deleteEmployee(id).then(res => {
+  deleteEmp = (id) => {
+    this.props.deleteEmployee(id).then((res) => {
       if (res.success === 'OK') {
         this.hideAlert();
         this.getEmployeesData();
@@ -147,29 +147,29 @@ class Employees extends React.Component {
   };
   hideAlert = () => {
     this.setState({
-      notifyAlert: null
+      notifyAlert: null,
     });
   };
-  editEmp = item => {
+  editEmp = (item) => {
     // console.log(data, 'emp data edit');
     this.setState({
       name: item.name,
       email: item.email,
       phone: item.phone,
-      id: item._id
+      id: item._id,
     });
     this.toggleModal('editFormModal');
   };
-  onEditSubmitHandler = e => {
+  onEditSubmitHandler = (e) => {
     e.preventDefault();
     let { email, password, name, phone, id } = this.state;
     const data = {
       email: email,
       password: password,
       phone: phone,
-      name: name
+      name: name,
     };
-    this.props.editEmployee(data, id).then(res => {
+    this.props.editEmployee(data, id).then((res) => {
       console.log(res, 'edit response');
       if (res.success === 'OK') {
         this.setState({
@@ -177,7 +177,7 @@ class Employees extends React.Component {
           password: '',
           email: '',
           phone: '',
-          id: ''
+          id: '',
         });
         this.toggleModal('editFormModal');
 
@@ -186,7 +186,7 @@ class Employees extends React.Component {
       }
     });
   };
-  onSubmitHandler = e => {
+  onSubmitHandler = (e) => {
     e.preventDefault();
     let { email, password, name, phone } = this.state;
     // console.log(email, password, 'input');
@@ -194,9 +194,9 @@ class Employees extends React.Component {
       email: email,
       password: password,
       phone: phone,
-      name: name
+      name: name,
     };
-    this.props.addEmployee(data).then(res => {
+    this.props.addEmployee(data).then((res) => {
       console.log(res, 'user added');
       if (res.data) {
         this.setState({
@@ -204,7 +204,7 @@ class Employees extends React.Component {
           password: '',
           email: '',
           phone: '',
-          formModal: false
+          formModal: false,
         });
         this.successAlert();
         this.getEmployeesData();
@@ -216,7 +216,7 @@ class Employees extends React.Component {
     this.getEmployeesData();
   }
   render() {
-    console.log(this.props.User, 'employee redux');
+    console.log(this.state.employees, 'employee redux');
     return (
       <>
         {this.state.notifyAlert}
@@ -242,7 +242,7 @@ class Employees extends React.Component {
                 <Form role='form' onSubmit={this.onSubmitHandler}>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -263,7 +263,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -284,7 +284,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -305,7 +305,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames({
-                      focused: this.state.focusedPassword
+                      focused: this.state.focusedPassword,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -321,7 +321,7 @@ class Employees extends React.Component {
                         onFocus={() => this.setState({ focusedPassword: true })}
                         onBlur={() =>
                           this.setState({
-                            focusedPassword: false
+                            focusedPassword: false,
                           })
                         }
                         onChange={this.onChangeHandler}
@@ -367,7 +367,7 @@ class Employees extends React.Component {
                 <Form role='form' onSubmit={this.onEditSubmitHandler}>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -389,7 +389,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -411,7 +411,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames('mb-3', {
-                      focused: this.state.focusedEmail
+                      focused: this.state.focusedEmail,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -433,7 +433,7 @@ class Employees extends React.Component {
                   </FormGroup>
                   <FormGroup
                     className={classnames({
-                      focused: this.state.focusedPassword
+                      focused: this.state.focusedPassword,
                     })}
                   >
                     <InputGroup className='input-group-merge input-group-alternative'>
@@ -449,7 +449,7 @@ class Employees extends React.Component {
                         onFocus={() => this.setState({ focusedPassword: true })}
                         onBlur={() =>
                           this.setState({
-                            focusedPassword: false
+                            focusedPassword: false,
                           })
                         }
                         onChange={this.onChangeHandler}
@@ -488,24 +488,25 @@ class Employees extends React.Component {
                 <Col lg='6' xs='7'>
                   <h6 className='fullcalendar-title h2 text-white d-inline-block mb-0'>
                     Employees
-                  </h6>{' '}
+                  </h6>
                   <Breadcrumb
                     className='d-none d-md-inline-block ml-lg-4'
                     listClassName='breadcrumb-links breadcrumb-dark'
                   >
                     <BreadcrumbItem>
-                      <a href='#pablo' onClick={e => e.preventDefault()}>
+                      <a href='#pablo' onClick={(e) => e.preventDefault()}>
                         <i className='fas fa-home' />
                       </a>
                     </BreadcrumbItem>
                     <BreadcrumbItem>
-                      <a href='#pablo' onClick={e => e.preventDefault()}>
+                      <a href='#pablo' onClick={(e) => e.preventDefault()}>
                         Data
                       </a>
                     </BreadcrumbItem>
-                    <BreadcrumbItem aria-current='page' className='active'>
-                      {''}
-                    </BreadcrumbItem>
+                    <BreadcrumbItem
+                      aria-current='page'
+                      className='active'
+                    ></BreadcrumbItem>
                   </Breadcrumb>
                 </Col>
                 {this.props.User.user.role === 'admin' ? (
@@ -592,7 +593,6 @@ class Employees extends React.Component {
                     <td>
                       <span className='text-muted'>{item.status}</span>
                     </td>
-
                     {this.props.User.user.role === 'admin' ? (
                       <td className='table-actions'>
                         <Button
@@ -638,15 +638,15 @@ class Employees extends React.Component {
     );
   }
 }
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    User: state.User
+    User: state.User,
   };
 };
 const mapDispatchToProps = {
   getEmployees,
   addEmployee,
   deleteEmployee,
-  editEmployee
+  editEmployee,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Employees);

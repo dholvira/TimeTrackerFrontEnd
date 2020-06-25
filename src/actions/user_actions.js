@@ -2,7 +2,7 @@ import {
   SET_USER,
   SET_BREAKS,
   SET_EMP_BREAKS,
-  SET_MY_BREAKS
+  SET_MY_BREAKS,
 } from '../types/app';
 import { config } from '../siteDetails';
 import axios from 'axios';
@@ -28,31 +28,31 @@ export const setUser = (token, remember) => {
 
   return {
     type: SET_USER,
-    payload: decoded
+    payload: decoded,
   };
 };
 
-export const setBreaks = data => {
+export const setBreaks = (data) => {
   return {
     type: SET_BREAKS,
-    payload: data
+    payload: data,
   };
 };
-export const signInn = (email, password) => dispatch => {
+export const signInn = (email, password) => (dispatch) => {
   return new Promise((resolve, reject) => {
     return axios({
       method: 'POST',
       url: `${config.serverUrl}login/logincheck`,
       data: {
         email: email,
-        password: password
+        password: password,
       },
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     })
-      .then(res => res.data)
-      .then(res => {
+      .then((res) => res.data)
+      .then((res) => {
         if (res.error) {
           resolve(res.error);
         } else {
@@ -62,30 +62,30 @@ export const signInn = (email, password) => dispatch => {
           resolve(true);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         return false;
       });
   });
 };
-const setEmpBreaks = data => {
+const setEmpBreaks = (data) => {
   return {
     type: SET_EMP_BREAKS,
-    payload: data
+    payload: data,
   };
 };
-export const getEmployeeBreaks = (page = 1, limit = 10) => dispatch => {
+export const getEmployeeBreaks = (page = 1, limit = 10) => (dispatch) => {
   return new Promise((resolve, reject) => {
     return axios({
       method: 'GET',
       url: `${config.serverUrl}break/getAll?page=${page}&limit=${limit}`,
       headers: {
         'Content-Type': 'application/json',
-        'x-auth-token': localStorage.authToken
-      }
+        'x-auth-token': localStorage.authToken,
+      },
     })
-      .then(response => response.data)
-      .then(res => {
+      .then((response) => response.data)
+      .then((res) => {
         if (!res.data) {
           resolve(false);
         } else {
@@ -93,34 +93,34 @@ export const getEmployeeBreaks = (page = 1, limit = 10) => dispatch => {
           resolve(true);
         }
       })
-      .catch(err => console.log(err, 'error fetching breaks'));
+      .catch((err) => console.log(err, 'error fetching breaks'));
   });
 };
-export const getBreaks = id => dispatch => {
+export const getBreaks = (id) => (dispatch) => {
   return axios({
     method: 'GET',
     url: `${config.serverUrl}break/today/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error fetching breaks'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error fetching breaks'));
 };
 
-export const getMyBreaks = (id, page = 1, limit = 10) => dispatch => {
+export const getMyBreaks = (id, page = 1, limit = 10) => (dispatch) => {
   return new Promise((resolve, reject) => {
     return axios({
       method: 'GET',
       url: `${config.serverUrl}break/getAll/${id}?page=${page}&limit=${limit}`,
       headers: {
         'Content-Type': 'application/json',
-        'x-auth-token': localStorage.authToken
-      }
+        'x-auth-token': localStorage.authToken,
+      },
     })
-      .then(response => response.data)
-      .then(res => {
+      .then((response) => response.data)
+      .then((res) => {
         if (!res.data) {
           resolve(false);
         } else {
@@ -128,229 +128,227 @@ export const getMyBreaks = (id, page = 1, limit = 10) => dispatch => {
           resolve(true);
         }
       })
-      .catch(err => console.log(err, 'error fetching breaks'));
+      .catch((err) => console.log(err, 'error fetching breaks'));
   });
 };
-const setMyBreaks = data => {
+const setMyBreaks = (data) => {
   return {
     type: SET_MY_BREAKS,
-    payload: data
+    payload: data,
   };
 };
 
-export const breakStart = id => dispatch => {
+export const breakStart = (id) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}break/start`,
     data: { user: id },
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error starting break'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error starting break'));
 };
 
-export const checkBreaks = id => dispatch => {
+export const checkBreaks = (id) => (dispatch) => {
   return axios({
     method: 'GET',
     url: `${config.serverUrl}break/check/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error checking breaks'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error checking breaks'));
 };
-export const breakEnd = id => dispatch => {
+export const breakEnd = (id) => (dispatch) => {
   return axios({
     method: 'PUT',
     url: `${config.serverUrl}break/end`,
     data: { user: id },
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error ending break'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error ending break'));
 };
-export const getEmployees = () => dispatch => {
+export const getEmployees = () => (dispatch) => {
   return axios({
     method: 'GET',
     url: `${config.serverUrl}user/get`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
-export const addEmployee = data => dispatch => {
+export const addEmployee = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}user/add`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
 
-export const deleteEmployee = id => dispatch => {
+export const deleteEmployee = (id) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}user/remove`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: { id }
+    data: { id },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
 
-export const editEmployee = (data, id) => dispatch => {
+export const editEmployee = (data, id) => (dispatch) => {
   return axios({
     method: 'PUT',
     url: `${config.serverUrl}user/edit/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
-export const getBreaksCount = id => dispatch => {
+export const getBreaksCount = (id) => (dispatch) => {
   return axios({
     method: 'GET',
     url: `${config.serverUrl}break/getCount/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
-export const getEmployeeBreaksCount = () => dispatch => {
+export const getEmployeeBreaksCount = () => (dispatch) => {
   return axios({
     method: 'GET',
     url: `${config.serverUrl}break/getCount/`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
 
-export const getTimesheet = data => dispatch => {
+export const getTimesheet = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}history/getAll`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error found fetching employees!'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error found fetching employees!'));
 };
-export const addReason = data => dispatch => {
+export const addReason = (data) => (dispatch) => {
   return axios({
     method: 'PUT',
     url: `${config.serverUrl}history/reason`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding reason'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding reason'));
 };
 
-export const editLeave = (data, id) => dispatch => {
+export const editLeave = (data, id) => (dispatch) => {
   return axios({
     method: 'PUT',
     url: `${config.serverUrl}leave/update/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error editing leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error editing leave'));
 };
-export const deleteLeave = id => dispatch => {
+export const deleteLeave = (id) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}leave/remove`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: { id }
+    data: { id },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error deleting leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error deleting leave'));
 };
 
-export const addLeave = data => dispatch => {
+export const addLeave = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}leave/add`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
-export const adminAddLeave = data => dispatch => {
+export const adminAddLeave = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}leave/adminAdd`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding admin leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding admin leave'));
 };
-export const approveLeave = id => dispatch => {
+export const approveLeave = (id) => (dispatch) => {
   return axios({
     method: 'PUT',
     url: `${config.serverUrl}leave/approve/${id}`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
-    }
+      'x-auth-token': localStorage.authToken,
+    },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
-export const editLogs = (data, type) => dispatch => {
-  data.selected_time = moment(data.selected_time)
-    .tz('GMT')
-    .format();
+export const editLogs = (data, type) => (dispatch) => {
+  data.selected_time = moment(data.selected_time).tz('GMT').format();
   let url = `${config.serverUrl}history/login`;
   if (type === 'logout') {
     url = `${config.serverUrl}history/logout`;
@@ -360,19 +358,17 @@ export const editLogs = (data, type) => dispatch => {
     url: url,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
 
-export const editBreaks = (data, type) => dispatch => {
+export const editBreaks = (data, type) => (dispatch) => {
   console.log(type, 'type4');
-  data.selected_time = moment(data.selected_time)
-    .tz('GMT')
-    .format();
+  data.selected_time = moment(data.selected_time).tz('GMT').format();
   let url = `${config.serverUrl}break/editStart`;
   if (type === 'end') {
     url = `${config.serverUrl}break/editEnd`;
@@ -382,90 +378,90 @@ export const editBreaks = (data, type) => dispatch => {
     url: url,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
 
-export const fetchEvents = data => dispatch => {
+export const fetchEvents = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}leave/getAllApproved`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
-export const fetchNews = data => dispatch => {
+export const fetchNews = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}news/getAll`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
-export const addNews = data => dispatch => {
+export const addNews = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}news/add`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
 
-export const deleteNews = id => dispatch => {
+export const deleteNews = (id) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}news/remove`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: { id }
+    data: { id },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding leave'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding leave'));
 };
-export const logEmployeeBreak = data => dispatch => {
+export const logEmployeeBreak = (data) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}break/startEnd`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: data
+    data: data,
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error adding break'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error adding break'));
 };
-export const deleteEmployeeBreak = id => dispatch => {
+export const deleteEmployeeBreak = (id) => (dispatch) => {
   return axios({
     method: 'POST',
     url: `${config.serverUrl}break/remove`,
     headers: {
       'Content-Type': 'application/json',
-      'x-auth-token': localStorage.authToken
+      'x-auth-token': localStorage.authToken,
     },
-    data: { id }
+    data: { id },
   })
-    .then(response => response.data)
-    .catch(err => console.log(err, 'error deleting record'));
+    .then((response) => response.data)
+    .catch((err) => console.log(err, 'error deleting record'));
 };

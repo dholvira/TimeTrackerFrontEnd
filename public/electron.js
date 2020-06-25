@@ -3,20 +3,29 @@ const {
   BrowserWindow,
   webContents,
   powerMonitor,
-  globalShortcut
+  globalShortcut,
 } = require('electron');
-
 const path = require('path');
+// const Store = require('./store.js');
+
 const isDev = require('electron-is-dev');
 // const gkm = require('gkm');
 // const ioHook = require('iohook');
 const { ipcMain } = require('electron');
-
+// const socketCall = require('./socket');
 // const prepareKey = require('./prepareKey');
 // const sendPack = require('./sendPack');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+
+// const store = new Store({
+//   // our data file 'user-data'
+//   configName: 'user-data',
+//   defaults: {
+//     windowBounds: { width: 800, height: 600 }
+//   },
+// });
 
 function createWindow() {
   // Create the browser window.
@@ -32,24 +41,24 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       backgroundThrottling: false,
-      preload: __dirname + '/preload.js'
-    }
+      preload: __dirname + '/preload.js',
+    },
   });
 
   // and load the index.html of the
   //   win.loadFile('index.html')
-  win.loadURL(
-    isDev
-      ? 'http://localhost:3001'
-      : `file://${path.join(__dirname, '../build/index.html')}`
-  );
+  // win.loadURL(
+  //   isDev
+  //     ? 'http://localhost:3001'
+  //     : `file://${path.join(__dirname, '../build/index.html')}`
+  // );
 
-  // win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
+  win.loadURL(`file://${path.join(__dirname, '../build/index.html')}`);
   const shortcut = globalShortcut.register('Control+Space', () => {
     win.show();
   });
   // Open the DevTools.
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   let wc = win.webContents;
 
@@ -61,8 +70,16 @@ function createWindow() {
     console.log('content fully loaded');
   });
 
+  // wc.on('resize', () => {
+  //   console.log('resize event invoked')
+  //   // The event doesn't pass us the window size, so we call the `getBounds` method which returns an object with
+  //   // the height, width, and x and y coordinates.
+  //   let { width, height } = mainWindow.getBounds();
+  //   // Now that we have them, save them using the `set` method.
+  //   store.set('windowBounds', { width, height });
+  // });
   // const { powerMonitor } = require('electron');
-  var IdleActivity = function() {
+  var IdleActivity = function () {
     // console.log(logger, 'Sending data to your API...');
     var log = 0;
     log = powerMonitor.getSystemIdleTime();
@@ -70,7 +87,7 @@ function createWindow() {
       // setInterval(function() {
       win.show();
       wc.send('message', {
-        alert: 'Your break will automatically start in 10 seconds..'
+        alert: 'Your break will automatically start in 10 seconds..',
       });
       console.log('inactive');
       // }, 3000);
@@ -83,7 +100,7 @@ function createWindow() {
 
     // console.log('idle time', powerMonitor.getSystemIdleTime());
   };
-  var IdleTimer = function() {
+  var IdleTimer = function () {
     // console.log(logger, 'Sending data to your API...');
     var logs = 0;
     logs = powerMonitor.getSystemIdleTime();
@@ -91,7 +108,7 @@ function createWindow() {
       // setInterval(function() {
       // win.show();
       wc.send('initiateBreak', {
-        alert: 'Starting Break'
+        alert: 'Starting Break',
       });
       // console.log('start break');
       // }, 3000);
@@ -122,6 +139,7 @@ function createWindow() {
   });
   ipcMain.on('logIn', async (event, arg) => {
     console.log(arg);
+    // socketCall(arg);
     for (var i = 0; i < checkIdleTimer.length; i++) {
       clearInterval(checkIdleTimer[i]);
     }

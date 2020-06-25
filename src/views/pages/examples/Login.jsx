@@ -99,7 +99,7 @@ class Login extends React.Component {
           },
         })
           .then((res) => {
-            // console.log(res, 'auth check');
+            console.log(res, 'auth check');
             if (res.data.message === 'valid') {
               this.props.setUser(localStorage.authToken, this.state.isChecked);
 

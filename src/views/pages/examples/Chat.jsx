@@ -1,323 +1,419 @@
-// import React from 'react';
-// import { connect } from 'react-redux';
+import React from 'react';
+import { connect } from 'react-redux';
+import {
+  registerChatUser,
+  privateMessage,
+} from '../../../actions/chat_actions';
+import axios from 'axios';
+
+// reactstrap components
+import NotificationAlert from 'react-notification-alert';
+
+import {
+  Badge,
+  Card,
+  CardHeader,
+  CardBody,
+  Container,
+  // Row,
+  // Col,
+  Modal,
+  Button,
+  Form,
+  FormGroup,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Input,
+} from 'reactstrap';
+
+// core components
+import NavBar from '../components/NavBar';
+import Grid from 'react-bootstrap/lib/Grid';
+import Row from 'react-bootstrap/lib/Row';
+import Col from 'react-bootstrap/lib/Col';
+// import Modal from 'react-bootstrap/lib/Modal';
+import UserList from '../components/UserList';
+import ChatBox from '../components/ChatBox';
+import ErrorModal from '../components/ErrorModal';
+import LoadingModal from '../components/LoadingModal';
+import 'react-chat-elements/dist/main.css';
+import './index.css';
+import io from 'socket.io-client';
+import { fetchUsers } from './requests';
 // import {
-//   registerChatUser,
-//   privateMessage,
-// } from '../../../actions/chat_actions';
+//   NotificationContainer,
+//   NotificationManager,
+// } from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
+import ReactBSAlert from 'react-bootstrap-sweetalert';
 
-// // reactstrap components
-// import {
-//   Badge,
-//   Card,
-//   CardHeader,
-//   CardBody,
-//   Container,
-//   Row,
-//   Col,
-//   Button,
-//   Form,
-//   FormGroup,
-//   InputGroup,
-//   InputGroupAddon,
-//   InputGroupText,
-//   Input,
-// } from 'reactstrap';
-// // core components
-// import classnames from 'classnames';
+import classnames from 'classnames';
 
-// import SimpleHeader from 'components/Headers/SimpleHeader.jsx';
+import SimpleHeader from 'components/Headers/SimpleHeader.jsx';
 
-// class Chat extends React.Component {
-//   state = {
-//     message: '',
-//     messages: [],
-//     recieverId: '',
-//   };
+const SOCKET_URI = 'http://165.22.212.180:8002';
 
-//   setRecieverId = (id) => {
-//     this.setState({ recieverId: id });
-//   };
-//   onChangeHandler = (e) => {
-//     let name = e.target.name;
-//     this.setState({ [name]: e.target.value });
-//   };
-//   componentDidMount() {
-//     if (this.props.User.user.name) {
-//       const username = this.props.User.user.name;
-//       this.props.registerChatUser(username);
-//     }
-//   }
-//   onMessageSubmitHandler = () => {
-//     this.props.privateMessage(this.state.message, this.state.recieverId);
-//   };
-//   render() {
-//     // console.log(
-//     //   this.props.Chat,
-//     //   this.state.recieverId,
-//     //   this.state.message,
-//     //   'user details'
-//     // );
+class Chat extends React.Component {
+  socket = null;
 
-//     return (
-//       <>
-//         <SimpleHeader name='Chat Component' />
-//         <Container className='mt--6' fluid>
-//           <Row>
-//             {this.props.Chat.usersOnline
-//               ? this.props.Chat.usersOnline.map((user, index) => {
-//                   return (
-//                     <Card key={index}>
-//                       <CardBody>
-//                         <Row className='align-items-center'>
-//                           <Col className='col-auto'>
-//                             <a
-//                               className='avatar avatar-xl rounded-circle'
-//                               href='#pablo'
-//                               onClick={(e) => e.preventDefault()}
-//                             >
-//                               <img alt='...' src={user.avatar} />
-//                             </a>
-//                           </Col>
-//                           <div className='col ml--2'>
-//                             <h4 className='mb-0'>
-//                               <a
-//                                 href='#pablo'
-//                                 onClick={(e) => e.preventDefault()}
-//                               >
-//                                 {user.username}
-//                               </a>
-//                             </h4>
-//                             <p className='text-sm text-muted mb-0'>
-//                               Working remoteley
-//                             </p>
-//                             <span className='text-success mr-1'>●</span>
-//                             <small>Active</small>
-//                           </div>
-//                           <Col className='col-auto'>
-//                             <Button
-//                               color='primary'
-//                               size='sm'
-//                               type='button'
-//                               onClick={() => this.setRecieverId(user.userId)}
-//                             >
-//                               Chat
-//                             </Button>
-//                           </Col>
-//                         </Row>
-//                       </CardBody>
-//                     </Card>
-//                   );
-//                 })
-//               : ''}
+  state = {
+    signInModalShow: false,
+    users: [], // Avaiable users for signing-in
+    reduxUser: null,
+    userChatData: [], // this contains users from which signed-in user can chat and its message data.
+    user: null, // Signed-In User
+    selectedUserIndex: null,
+    showChatBox: false, // For small devices only
+    showChatList: true, // For small devices only
+    error: null,
+    errorMessage: '',
+  };
 
-//             <Col lg='6'>
-//               <Card className='bg-secondary border-0 mb-0'>
-//                 <CardBody className='px-lg-5 py-lg-5'>
-//                   <div className='text-center text-muted mb-4'>
-//                     <small>Send Message</small>
-//                   </div>
-//                   <Form
-//                     role='form'
-//                     onSubmit={() => this.onMessageSubmitHandler()}
-//                   >
-//                     <FormGroup
-//                       className={classnames('mb-3', {
-//                         //   focused: this.state.focusedEmail,
-//                       })}
-//                     >
-//                       <InputGroup className='input-group-merge input-group-alternative'>
-//                         <InputGroupAddon addonType='prepend'>
-//                           <InputGroupText>
-//                             <i className='ni ni-single-02' />
-//                           </InputGroupText>
-//                         </InputGroupAddon>
-//                         <Input
-//                           placeholder='Type your message'
-//                           type='text'
-//                           name='message'
-//                           value={this.state.message}
-//                           onFocus={() => this.setState({ focusedEmail: true })}
-//                           onBlur={() => this.setState({ focusedEmail: false })}
-//                           onChange={this.onChangeHandler}
-//                         />
-//                       </InputGroup>
-//                     </FormGroup>
-//                     <div className='text-center'>
-//                       <Button className='my-4' color='primary' type='submit'>
-//                         Send
-//                       </Button>
-//                     </div>
-//                   </Form>
-//                 </CardBody>
-//               </Card>
-//               <Card className='bg-gradient-default shadow'>
-//                 <CardHeader className='bg-transparent'>
-//                   <h3 className='mb-0 text-white'>Dark timeline</h3>
-//                 </CardHeader>
+  hideAlert = () => {
+    this.setState({
+      error: null,
+    });
+  };
+  toggleModal = (state) => {
+    this.setState({
+      [state]: !this.state[state],
+    });
+  };
 
-//                 <ul></ul>
-//                 {/* <CardBody>
-//                   <div
-//                     className='timeline timeline-one-side'
-//                     data-timeline-axis-style='dashed'
-//                     data-timeline-content='axis'
-//                   >
-//                     <div className='timeline-block'>
-//                       <span className='timeline-step badge-success'>
-//                         <i className='ni ni-bell-55' />
-//                       </span>
-//                       <div className='timeline-content'>
-//                         <small className='text-light font-weight-bold'>
-//                           10:30 AM
-//                         </small>
-//                         <h5 className='text-white mt-3 mb-0'>New message</h5>
-//                         <p className='text-light text-sm mt-1 mb-0'>
-//                           Nullam id dolor id nibh ultricies vehicula ut id elit.
-//                           Cum sociis natoque penatibus et magnis dis parturient
-//                           montes, nascetur ridiculus mus.
-//                         </p>
-//                         <div className='mt-3'>
-//                           <Badge color='success' pill>
-//                             design
-//                           </Badge>
-//                           <Badge color='success' pill>
-//                             system
-//                           </Badge>
-//                           <Badge color='success' pill>
-//                             creative
-//                           </Badge>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div className='timeline-block'>
-//                       <span className='timeline-step badge-danger'>
-//                         <i className='ni ni-html5' />
-//                       </span>
-//                       <div className='timeline-content'>
-//                         <small className='text-light font-weight-bold'>
-//                           10:30 AM
-//                         </small>
-//                         <h5 className='text-white mt-3 mb-0'>Product issue</h5>
-//                         <p className='text-light text-sm mt-1 mb-0'>
-//                           Nullam id dolor id nibh ultricies vehicula ut id elit.
-//                           Cum sociis natoque penatibus et magnis dis parturient
-//                           montes, nascetur ridiculus mus.
-//                         </p>
-//                         <div className='mt-3'>
-//                           <Badge color='danger' pill>
-//                             design
-//                           </Badge>
-//                           <Badge color='danger' pill>
-//                             system
-//                           </Badge>
-//                           <Badge color='danger' pill>
-//                             creative
-//                           </Badge>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div className='timeline-block'>
-//                       <span className='timeline-step badge-info'>
-//                         <i className='ni ni-like-2' />
-//                       </span>
-//                       <div className='timeline-content'>
-//                         <small className='text-light font-weight-bold'>
-//                           10:30 AM
-//                         </small>
-//                         <h5 className='text-white mt-3 mb-0'>New likes</h5>
-//                         <p className='text-light text-sm mt-1 mb-0'>
-//                           Nullam id dolor id nibh ultricies vehicula ut id elit.
-//                           Cum sociis natoque penatibus et magnis dis parturient
-//                           montes, nascetur ridiculus mus.
-//                         </p>
-//                         <div className='mt-3'>
-//                           <Badge color='info' pill>
-//                             design
-//                           </Badge>
-//                           <Badge color='info' pill>
-//                             system
-//                           </Badge>
-//                           <Badge color='info' pill>
-//                             creative
-//                           </Badge>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div className='timeline-block'>
-//                       <span className='timeline-step badge-success'>
-//                         <i className='ni ni-bell-55' />
-//                       </span>
-//                       <div className='timeline-content'>
-//                         <small className='text-light font-weight-bold'>
-//                           10:30 AM
-//                         </small>
-//                         <h5 className='text-white mt-3 mb-0'>New message</h5>
-//                         <p className='text-light text-sm mt-1 mb-0'>
-//                           Nullam id dolor id nibh ultricies vehicula ut id elit.
-//                           Cum sociis natoque penatibus et magnis dis parturient
-//                           montes, nascetur ridiculus mus.
-//                         </p>
-//                         <div className='mt-3'>
-//                           <Badge color='success' pill>
-//                             design
-//                           </Badge>
-//                           <Badge color='success' pill>
-//                             system
-//                           </Badge>
-//                           <Badge color='success' pill>
-//                             creative
-//                           </Badge>
-//                         </div>
-//                       </div>
-//                     </div>
-//                     <div className='timeline-block'>
-//                       <span className='timeline-step badge-danger'>
-//                         <i className='ni ni-html5' />
-//                       </span>
-//                       <div className='timeline-content'>
-//                         <small className='text-light font-weight-bold'>
-//                           10:30 AM
-//                         </small>
-//                         <h5 className='text-white mt-3 mb-0'>Product issue</h5>
-//                         <p className='text-light text-sm mt-1 mb-0'>
-//                           Nullam id dolor id nibh ultricies vehicula ut id elit.
-//                           Cum sociis natoque penatibus et magnis dis parturient
-//                           montes, nascetur ridiculus mus.
-//                         </p>
-//                         <div className='mt-3'>
-//                           <Badge color='danger' pill>
-//                             design
-//                           </Badge>
-//                           <Badge color='danger' pill>
-//                             system
-//                           </Badge>
-//                           <Badge color='danger' pill>
-//                             creative
-//                           </Badge>
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </CardBody>
-//                */}
-//               </Card>
-//             </Col>
-//           </Row>
-//         </Container>
-//       </>
-//     );
-//   }
-// }
+  notify = (type) => {
+    let options = {
+      place: 'tc',
+      message: (
+        <div className='alert-text'>
+          <span className='alert-title' data-notify='title'>
+            {' '}
+            {this.state.error}
+          </span>
+          <span data-notify='message'>{this.state.errorMessage}</span>
+        </div>
+      ),
+      type: type,
+      icon: 'ni ni-bell-55',
+      autoDismiss: 7,
+    };
+    this.refs.notificationAlert.notificationAlert(options);
+  };
+  /**
+   *
+   * Setups Axios to monitor XHR errors.
+   * Initiates and listen to socket.
+   * fetches User's list from backend to populate.
+   */
+  getUserDetails() {
+    const chatObj = this.props.User.user;
+    chatObj.id = chatObj.uid;
+    console.log(chatObj, 'userobject');
+    this.setState({ reduxUser: [chatObj] });
+  }
 
-// // export default Chat;
-// const mapStateToProps = (state) => {
-//   return {
-//     Chat: state.Chat,
-//     User: state.User,
-//   };
-// };
-// const mapDispatchToProps = {
-//   registerChatUser,
-//   privateMessage,
-// };
-// export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+  componentDidMount() {
+    this.initAxios();
+    this.getUserDetails();
+    this.initSocketConnection();
+    fetchUsers().then((users) =>
+      this.setState({ users, signInModalShow: true })
+    );
+
+    this.setupSocketListeners();
+  }
+
+  initSocketConnection() {
+    this.socket = io.connect(SOCKET_URI);
+  }
+
+  /**
+   *
+   * Checks if request from axios fails
+   * and if it does then shows error modal.
+   */
+  initAxios() {
+    axios.interceptors.request.use(
+      (config) => {
+        this.setState({ loading: true });
+        return config;
+      },
+      (error) => {
+        this.setState({ loading: false });
+        this.setState({
+          errorMessage: `Couldn't connect to server. try refreshing the page.`,
+          error: true,
+        });
+        this.notify('warning');
+        return Promise.reject(error);
+      }
+    );
+    axios.interceptors.response.use(
+      (response) => {
+        this.setState({ loading: false });
+        return response;
+      },
+      (error) => {
+        this.setState({ loading: false });
+        this.setState({
+          errorMessage: `Some error occured. try after sometime`,
+          error: true,
+        });
+        // this.warningAlert();
+        this.notify('warning');
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  /**
+   *
+   * Shows error if client gets disconnected.
+   */
+  onClientDisconnected() {
+    this.setState({
+      errorMessage: `Connection Lost from server please check your connection`,
+      error: `Error!`,
+    });
+    this.notify('warning');
+    // NotificationManager.error(
+    //   'Connection Lost from server please check your connection.',
+    //   'Error!'
+    // );
+  }
+
+  /**
+   *
+   * Established new connection if reconnected.
+   */
+  onReconnection() {
+    if (this.state.user) {
+      this.socket.emit('sign-in', this.state.user);
+      this.setState({
+        errorMessage: `Connection Established.`,
+        error: `Reconnected!`,
+      });
+      this.notify('success');
+      // NotificationManager.success('Connection Established.', 'Reconnected!');
+    }
+  }
+
+  /**
+   *
+   * Setup all listeners
+   */
+
+  setupSocketListeners() {
+    this.socket.on('message', this.onMessageRecieved.bind(this));
+    this.socket.on('reconnect', this.onReconnection.bind(this));
+    this.socket.on('disconnect', this.onClientDisconnected.bind(this));
+  }
+
+  /**
+   *
+   * @param {MessageRecievedFromSocket} message
+   *
+   * Triggered when message is received.
+   * It can be a message from user himself but on different session (Tab).
+   * so it decides which is the position of the message "right" or "left".
+   *
+   * increments unread count and appends in the messages array to maintain Chat History
+   */
+
+  onMessageRecieved(message) {
+    let userChatData = this.state.userChatData;
+    let messageData = message.message;
+    let targetId;
+    if (message.from === this.state.user.id) {
+      messageData.position = 'right';
+      targetId = message.to;
+    } else {
+      messageData.position = 'left';
+      targetId = message.from;
+    }
+    let targetIndex = userChatData.findIndex((u) => u.id === targetId);
+    if (!userChatData[targetIndex].messages) {
+      userChatData[targetIndex].messages = [];
+    }
+    if (targetIndex !== this.state.selectedUserIndex) {
+      if (!userChatData[targetIndex].unread) {
+        userChatData[targetIndex].unread = 0;
+      }
+      userChatData[targetIndex].unread++;
+    }
+    userChatData[targetIndex].messages.push(messageData);
+    this.setState({ userChatData });
+  }
+
+  /**
+   *
+   * @param {User} e
+   *
+   * called when user clicks to sign-in
+   */
+  onUserClicked(e) {
+    let user = e.user;
+    this.socket.emit('sign-in', user);
+    let userChatData = this.state.users.filter((u) => u.id !== user.id);
+    this.setState({ user, signInModalShow: false, userChatData });
+  }
+
+  signInRedux(name, id) {
+    let user = { name, id };
+
+    this.socket.emit('sign-in', user);
+    let userChatData = this.state.users.filter((u) => u.id !== user.id);
+    this.setState({ user, signInModalShow: false, userChatData });
+  }
+
+  /**
+   *
+   * @param {ChatItem} e
+   *
+   * handles if user clickes on ChatItem on left.
+   */
+  onChatClicked(e) {
+    this.toggleViews();
+    let users = this.state.userChatData;
+    for (let index = 0; index < users.length; index++) {
+      if (users[index].id === e.user.id) {
+        users[index].unread = 0;
+        this.setState({ selectedUserIndex: index, userChatData: users });
+        return;
+      }
+    }
+  }
+
+  /**
+   *
+   * @param {messageText} text
+   *
+   * creates message in a format in which messageList can render.
+   * position is purposely omitted and will be appended when message is received.
+   */
+  createMessage(text) {
+    let message = {
+      to: this.state.userChatData[this.state.selectedUserIndex].id,
+      message: {
+        type: 'text',
+        text: text,
+        date: +new Date(),
+        className: 'message',
+      },
+      from: this.state.user.id,
+    };
+    this.socket.emit('message', message);
+  }
+
+  /**
+   * Toggles views from 'ChatList' to 'ChatBox'
+   *
+   * only on Phone
+   */
+  toggleViews() {
+    this.setState({
+      showChatBox: !this.state.showChatBox,
+      showChatList: !this.state.showChatList,
+    });
+  }
+  render() {
+    let chatBoxProps = this.state.showChatBox
+      ? {
+          xs: 12,
+          sm: 12,
+        }
+      : {
+          xsHidden: true,
+          smHidden: true,
+        };
+
+    let chatListProps = this.state.showChatList
+      ? {
+          xs: 12,
+          sm: 12,
+        }
+      : {
+          xsHidden: true,
+          smHidden: true,
+        };
+
+    return (
+      <>
+        <div className='rna-wrapper'>
+          <NotificationAlert ref='notificationAlert' />
+        </div>
+        {/* <SimpleHeader name='Notifications' parentName='Components' /> */}
+
+        <NavBar bg='light' variant='light' signedInUser={this.state.user} />
+        <Grid>
+          <Row className='show-grid'>
+            <Col {...chatListProps} md={4}>
+              <UserList
+                userData={this.state.userChatData}
+                onChatClicked={this.onChatClicked.bind(this)}
+              />
+            </Col>
+            <Col {...chatBoxProps} md={8}>
+              <ChatBox
+                signedInUser={this.state.user}
+                onSendClicked={this.createMessage.bind(this)}
+                onBackPressed={this.toggleViews.bind(this)}
+                targetUser={
+                  this.state.userChatData[this.state.selectedUserIndex]
+                }
+              />
+            </Col>
+          </Row>
+        </Grid>
+        {/* <Modal show={this.state.signInModalShow}>
+          <Modal.Header>
+            <Modal.Title>Sign In as:</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            
+          </Modal.Body>
+        </Modal> */}
+
+        <Modal
+          className='modal-dialog-centered'
+          size='sm'
+          isOpen={this.state.signInModalShow}
+          toggle={() => this.toggleModal('signInModalShow')}
+        >
+          {/* <div className='modal-body p-0'>
+            <Card className='bg-secondary border-0 mb-0'>
+              <CardBody className='px-lg-5 py-lg-5'>
+                <div className='text-center text-muted mb-4'>
+                  <small>Sign In as:</small>
+                </div> */}
+          <UserList
+            userData={this.state.reduxUser}
+            onUserClicked={this.onUserClicked.bind(this)}
+            showSignInList
+          />
+          {/* </CardBody>
+            </Card>
+          </div> */}
+        </Modal>
+
+        <ErrorModal
+          show={this.state.error}
+          errorMessage={this.state.errorMessage}
+        />
+        <LoadingModal show={this.state.loading} />
+        {/* <NotificationContainer /> */}
+      </>
+    );
+  }
+}
+// export default Chat;
+const mapStateToProps = (state) => {
+  return {
+    User: state.User,
+  };
+};
+const mapDispatchToProps = {
+  registerChatUser,
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
